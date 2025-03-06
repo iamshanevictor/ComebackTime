@@ -13,7 +13,7 @@
     <style>
       body {
         font-family: 'Poppins', sans-serif;
-        background: #0e0e0e; /* Dark background to match the image's mood */
+        background: #0e0e0e; /* Dark background */
         color: #fff;
         display: flex;
         align-items: center;
@@ -22,13 +22,14 @@
         margin: 0;
       }
       .container {
-        background: #1a1a1a; /* Slightly lighter dark background for contrast */
-        padding: 30px;
+        background: #1a1a1a;
+        padding: 40px;                   /* Increased padding for a bigger container */
         border-radius: 8px;
         text-align: center;
-        box-shadow: 0 0 15px rgba(255, 0, 102, 0.5); /* Pink glow effect */
-        max-width: 400px;
-        margin: auto;
+        box-shadow: 0 0 15px rgba(255, 0, 102, 0.5);
+        width: 80%;                     /* Increased width from 90% to 80% */
+        max-width: 500px;              /* Increased max-width for larger screens */
+        margin: 0 auto;
       }
       h1 {
         color: #ff0066; /* Neon pink for headings */
@@ -37,7 +38,13 @@
       }
       .countdown {
         font-size: 1.3em;
-        color: #ff99cc; /* Lighter pink for countdown text */
+        color: #ff99cc;  /* Lighter pink for countdown text */
+        white-space: nowrap; /* Prevents wrapping onto multiple lines */
+      }
+      @media (max-width: 480px) {
+        .countdown {
+          font-size: 1.1em;
+        }
       }
     </style>
 
