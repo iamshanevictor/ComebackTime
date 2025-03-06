@@ -36,22 +36,28 @@
         var now = new Date();
         var timeLeft = targetDate - now;
 
+        // If time is up, display a message.
         if (timeLeft <= 0) {
           document.getElementById("countdown").innerHTML = "The 4-week period has ended!";
           clearInterval(timer);
           return;
         }
 
+        // Calculate days, hours, minutes, and seconds left.
         var days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
         var hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
         var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
+        // Update the countdown display.
         document.getElementById("countdown").innerHTML = 
           days + " Days, " + hours + " Hours, " + minutes + " Minutes, " + seconds + " Seconds";
       }
 
+      // Update the countdown every second.
       var timer = setInterval(updateCountdown, 1000);
+
+      // Run once on load to avoid delay.
       window.onload = updateCountdown;
     </script>
   </head>
