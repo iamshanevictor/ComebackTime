@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Date-Based Countdown</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .container {
+        background: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        text-align: center;
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 20px;
+      }
+      .countdown {
+        font-size: 1.5em;
+        color: #555;
+      }
+    </style>
+    <script type="text/javascript">
+      // Parse the target date passed from Flask.
+      var targetDate = new Date("{{ target_date_str }}");
+
+      function updateCountdown() {
+        var now = new Date();
+        var timeLeft = targetDate - now;
+
+        if (timeLeft <= 0) {
+          document.getElementById("countdown").innerHTML = "The 4-week period has ended!";
+          clearInterval(timer);
+          return;
+        }
+
+        var days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+        document.getElementById("countdown").innerHTML = 
+          days + " Days, " + hours + " Hours, " + minutes + " Minutes, " + seconds + " Seconds";
+      }
+
+      var timer = setInterval(updateCountdown, 1000);
+      window.onload = updateCountdown;
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Countdown to 4 Weeks Later</h1>
+      <div class="countdown" id="countdown"></div>
+    </div>
+  </body>
+</html>
