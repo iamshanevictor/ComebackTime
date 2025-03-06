@@ -12,14 +12,8 @@ firebase_config_json = os.environ.get("FIREBASE_CONFIG")
 if not firebase_config_json:
     raise ValueError("FIREBASE_CONFIG environment variable is not set.")
 
-# Replace escaped newline characters with actual newlines.
-firebase_config_json = firebase_config_json.replace('\\n', '\n')
-
 # Parse the JSON string into a dictionary.
-try:
-    firebase_config = json.loads(firebase_config_json)
-except json.JSONDecodeError as e:
-    raise ValueError("Failed to decode FIREBASE_CONFIG JSON: " + str(e))
+firebase_config = json.loads(firebase_config_json)
 
 # Initialize Firebase Admin SDK with the service account configuration.
 cred = credentials.Certificate(firebase_config)
@@ -38,7 +32,7 @@ def countdown():
         target_date = doc.to_dict().get('target_date')
         target_date_str = target_date.strftime('%Y-%m-%dT%H:%M:%S')
     else:
-        # Fallback: use current time if no record is found.
+        # Fallback to current time if no record is found.
         target_date_str = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
     
     return render_template('index.html', target_date_str=target_date_str)
