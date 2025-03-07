@@ -178,7 +178,7 @@
         </form>
 
         <!-- Existing Comments -->
-        {% for comment in comments %}
+        {% for comment in comments | reverse %}
         <div class="comment-box">
           <div class="comment-message">{{ comment.message }}</div>
           <div class="comment-footer">
