@@ -44,6 +44,7 @@
       }
       /* "Add a note" button */
       .add-note-button {
+        width: 100%;
         background-color: #2a2a2a;
         color: #ff99cc;
         padding: 10px;
@@ -67,6 +68,8 @@
         border-radius: 4px;
         background-color: #333;
         color: #fff;
+        resize: none;
+        box-sizing: border-box;
       }
       .add-comment-btn {
         background-color: #ff0066;
@@ -86,23 +89,28 @@
         text-align: left;
       }
       .comment-box {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         background-color: #262626;
         border-radius: 8px;
         padding: 20px;
         margin-bottom: 20px;
+        min-height: 10px; /* Ensure enough space */
       }
       .comment-header {
+        order: 2; /* Moves the header (name and upvote) to the bottom */
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 10px;
+        margin-top: 10px;
       }
       .comment-name {
         font-weight: 700;
         color: #ff99cc;
       }
       .comment-message {
-        margin-bottom: 10px;
+        order: 1; /* Moves the comment message to the top */
       }
       .upvote-form {
         display: inline-block;
@@ -175,8 +183,8 @@
           <!-- Always "Anonymous" -->
           <span class="comment-name">{{ comment.name }}</span>
           <form action="{{ url_for('upvote_comment', comment_id=comment.id) }}" method="POST" class="upvote-form">
-            <button type="submit" style="background: none; border: none; color: #ff99cc; cursor: pointer;">
-              Upvote? 👍 {{ comment.upvotes }}
+            <button type="submit" style="background: none; border: none; color: #553f4a; cursor: pointer;">
+              👍 {{ comment.upvotes }}
             </button>
           </form>
         </div>
