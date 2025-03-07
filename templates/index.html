@@ -1,6 +1,6 @@
 <!doctype html>
 <html>
-  <head>
+<head>
     <title>Shane</title>
     <!-- Favicon Link -->
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
@@ -12,79 +12,185 @@
 
     <style>
       body {
-        font-family: 'Poppins', sans-serif;
-        background: #0e0e0e; /* Dark background */
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        margin: 0;
-      }
-      .container {
-        background: #1a1a1a;
-        padding: 40px;                   /* Increased padding for a bigger container */
-        border-radius: 8px;
-        text-align: center;
-        box-shadow: 0 0 15px rgba(255, 0, 102, 0.5);
-        width: 80%;                     /* Increased width from 90% to 80% */
-        max-width: 500px;              /* Increased max-width for larger screens */
-        margin: 0 auto;
-      }
-      h1 {
-        color: #ff0066; /* Neon pink for headings */
-        margin-bottom: 20px;
-        font-weight: 700;
-      }
-      .countdown {
-        font-size: 1.3em;
-        color: #ff99cc;  /* Lighter pink for countdown text */
-        white-space: nowrap; /* Prevents wrapping onto multiple lines */
-      }
-      @media (max-width: 480px) {
-        .countdown {
-          font-size: 1.1em;
+            font-family: 'Poppins', sans-serif;
+            background: #0e0e0e;
+            color: #fff;
+            margin: 0;
+            padding: 0;
         }
-      }
+        .container {
+            background: #1a1a1a;
+            padding: 40px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(255, 0, 102, 0.5);
+            width: 80%;
+            max-width: 500px;
+            margin: 40px auto;
+        }
+        h1 {
+            color: #ff0066;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .countdown {
+            font-size: 1.3em;
+            color: #ff99cc;
+            white-space: nowrap;
+            margin-bottom: 30px;
+        }
+        /* "Add a note" button */
+        .add-note-button {
+            width: 100%;
+            background-color: #2a2a2a;
+            color: #ff99cc;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-weight: 700;
+            border: none;
+        }
+        /* Hidden form for adding a note */
+        .add-comment-form {
+            display: none;
+            margin-bottom: 20px;
+        }
+        .add-comment-input {
+          width: 100%;
+              margin-bottom: 10px;
+              padding: 8px;
+              border: none;
+              border-radius: 4px;
+              background-color: #333;
+              color: #fff;
+              resize: none; /* Disable resizing */
+              box-sizing: border-box; /* Ensures padding doesn't affect width */
+        }
+        .add-comment-btn {
+            background-color: #ff0066;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .add-comment-btn:hover {
+            background-color: #e6005c;
+        }
+        /* Comment Section */
+        .comment-section {
+            margin-top: 30px;
+            text-align: left;
+        }
+        .comment-box {
+          display: flex;
+          flex-direction: column;
+          background-color: #262626;
+          border-radius: 8px;
+          padding: 20px;
+          margin-bottom: 20px;
+          min-height: auto;
+          gap: 5px; /* Reduce spacing between elements */
+        }
+        .comment-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .comment-name {
+            font-weight: 700;
+            color: #ff99cc;
+            font-size: 12px; /* Make "Anonymous" smaller */
+            font-weight: bold;
+        }
+        .comment-message {
+            margin-bottom: 8px; /* Adjust spacing between message and name */
+            font-size: 15px; /* Make the message smaller */
+            font-family: Consolas, "Courier New", monospace; /* Apply Consolas font */
+            line-height: 1.4; /* Improve readability */
+            color: #f0f0f0; /* Light gray for better contrast */
+        }
+
+        .comment-footer {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .upvote-form {
+            display: inline-block;
+        }
     </style>
 
     <script type="text/javascript">
-      // Parse the target date passed from Flask
-      var targetDate = new Date("{{ target_date_str }}");
+        // Countdown code
+        var targetDate = new Date("{{ target_date_str }}");
 
-      function updateCountdown() {
-        var now = new Date();
-        var timeLeft = targetDate - now;
+        function updateCountdown() {
+            var now = new Date();
+            var timeLeft = targetDate - now;
 
-        // If time is up, display a message.
-        if (timeLeft <= 0) {
-          document.getElementById("countdown").innerHTML = "I'm Back!";
-          clearInterval(timer);
-          return;
+            if (timeLeft <= 0) {
+                document.getElementById("countdown").innerHTML = "I'm Back!";
+                clearInterval(timer);
+                return;
+            }
+
+            var days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+            document.getElementById("countdown").innerHTML =
+                days + " Days, " + hours + " Hours, " + minutes + " Minutes, " + seconds + " Seconds";
         }
 
-        // Calculate days, hours, minutes, and seconds left.
-        var days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-        var hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-        var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+        var timer = setInterval(updateCountdown, 1000);
+        window.onload = updateCountdown;
 
-        // Update the countdown display.
-        document.getElementById("countdown").innerHTML = 
-          days + " Days, " + hours + " Hours, " + minutes + " Minutes, " + seconds + " Seconds";
-      }
-
-      // Update the countdown every second.
-      var timer = setInterval(updateCountdown, 1000);
-
-      // Run once on load to avoid delay.
-      window.onload = updateCountdown;
+        // Toggle the "Add Note" form
+        function toggleNoteForm() {
+            var form = document.getElementById('noteForm');
+            form.style.display = (form.style.display === 'block') ? 'none' : 'block';
+        }
     </script>
-  </head>
-  <body>
+</head>
+<body>
+    <!-- Countdown Container -->
     <div class="container">
-      <h1>I will be back.</h1>
-      <div class="countdown" id="countdown"></div>
+        <h1>I will be back.</h1>
+        <div class="countdown" id="countdown"></div>
     </div>
-  </body>
+
+    <!-- Comments Container -->
+    <div class="container comment-section">
+        <h2 style="color: #ff0066;">Notes</h2>
+
+        <!-- "Add a note" button -->
+        <button class="add-note-button" onclick="toggleNoteForm()">+ Add a note</button>
+
+        <!-- Hidden form for adding a note (anonymous) -->
+        <form id="noteForm" class="add-comment-form" action="{{ url_for('add_comment') }}" method="POST">
+            <textarea name="message" class="add-comment-input" placeholder="Type your note, then click 'Add Note'" rows="3" required></textarea>
+            <button type="submit" class="add-comment-btn">Add Note</button>
+        </form>
+
+        <!-- Existing Comments -->
+        {% for comment in comments %}
+        <div class="comment-box">
+          <div class="comment-message">{{ comment.message }}</div>
+          <div class="comment-footer">
+              <span class="comment-name">-Anonymous</span>
+              <form action="{{ url_for('upvote_comment', comment_id=comment.id) }}" method="POST" class="upvote-form">
+                  <button type="submit" style="background: none; border: none; color: #ff99cc; cursor: pointer;">
+                      👍 {{ comment.upvotes }}
+                  </button>
+              </form>
+          </div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
 </html>
