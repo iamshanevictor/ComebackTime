@@ -7,39 +7,43 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# 1. Initialize Firebase using environment variable (or JSON file if you prefer).
+# 1. Initialize Firebase: try environment variable first, else local JSON file.
 firebase_config_json = os.environ.get("FIREBASE_CONFIG")
-if not firebase_config_json:
-    raise ValueError("FIREBASE_CONFIG environment variable is not set.")
 
-firebase_config = json.loads(firebase_config_json)
-cred = credentials.Certificate(firebase_config)
+if firebase_config_json:
+    # Parse the JSON string from the environment variable.
+    firebase_config = json.loads(firebase_config_json)
+    cred = credentials.Certificate(firebase_config)
+else:
+    # Fallback to the local service account JSON (not committed to Git).
+    with open("firebase-adminsdk.json", "r") as f:
+        cred = credentials.Certificate(json.load(f))
+
 firebase_admin.initialize_app(cred)
-
 db = firestore.client()
 
 @app.route('/', methods=['GET'])
 def countdown_and_comments():
     """
-    Displays the countdown and existing comments.
+    Displays the countdown (target_date) and the existing comments.
     """
-    # Countdown logic
+    # 2. Countdown logic (fetch from Firestore).
     doc_ref = db.collection('countdown').document('target_time')
     doc = doc_ref.get()
     if doc.exists:
         target_date = doc.to_dict().get('target_date')
         target_date_str = target_date.strftime('%Y-%m-%dT%H:%M:%S')
     else:
+        # Fallback to the current time if no document is found.
         target_date_str = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
     
-    # Fetch comments from Firestore, ordered by timestamp descending (optional).
+    # 3. Fetch comments from Firestore, ordered by timestamp descending.
     comments_ref = db.collection('comments').order_by('timestamp', direction=firestore.Query.DESCENDING)
     comments_snapshot = comments_ref.stream()
     
     comments = []
     for c in comments_snapshot:
         c_dict = c.to_dict()
-        # Each comment doc might have fields: name, message, upvotes, timestamp
         comments.append({
             'id': c.id,
             'name': c_dict.get('name', 'Anonymous'),
@@ -56,7 +60,7 @@ def countdown_and_comments():
 @app.route('/add_comment', methods=['POST'])
 def add_comment():
     """
-    Handles new comment form submission.
+    Handles new comment submissions from the form.
     """
     name = request.form.get('name', '').strip()
     message = request.form.get('message', '').strip()
@@ -66,7 +70,6 @@ def add_comment():
         name = "Anonymous"
     
     if message:
-        # Create a new document in Firestore with the provided name, message, and default upvotes = 0
         db.collection('comments').add({
             'name': name,
             'message': message,
@@ -74,7 +77,6 @@ def add_comment():
             'timestamp': datetime.now()
         })
     
-    # Redirect back to the main page
     return redirect(url_for('countdown_and_comments'))
 
 @app.route('/upvote/<comment_id>', methods=['POST'])
@@ -87,6 +89,7 @@ def upvote_comment(comment_id):
     if doc.exists:
         current_upvotes = doc.to_dict().get('upvotes', 0)
         comment_ref.update({'upvotes': current_upvotes + 1})
+    
     return redirect(url_for('countdown_and_comments'))
 
 if __name__ == '__main__':
