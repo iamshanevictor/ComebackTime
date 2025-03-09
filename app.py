@@ -37,7 +37,7 @@ def countdown_and_comments():
         target_date_str = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
     
     # 2. Fetch comments from Firestore, ordered by timestamp (descending)
-    comments_ref = db.collection('comments').order_by('timestamp', direction=firestore.Query.DESCENDING)
+    comments_ref = db.collection('comments').order_by('timestamp', direction=firestore.Query.ASCENDING)
     comments_snapshot = comments_ref.stream()
     
     comments = []
